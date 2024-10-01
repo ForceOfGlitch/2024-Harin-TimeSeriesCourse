@@ -15,8 +15,9 @@ class PairwiseDistance:
     is_normalize: normalize or not time series
     """
 
-    def __init__(self, metric: str = 'euclidean', is_normalize: bool = False) -> None:
+    def __init__(self, metric: str = 'euclidean', is_normalize: bool = False, norm_test: bool = False) -> None:
 
+        self.norm_test = norm_test
         self.metric: str = metric
         self.is_normalize: bool = is_normalize
     
@@ -49,7 +50,10 @@ class PairwiseDistance:
 
         dist_func = None
         if self.metric == "euclidean":
-            return ED_distance
+            if self.is_normalize:
+                return norm_ED_distance
+            else:
+                return ED_distance
             
         if self.metric == "dtw":
             return DTW_distance
@@ -67,6 +71,10 @@ class PairwiseDistance:
         -------
         matrix_values: distance matrix
         """
+        
+        if (self.distance_metric != "normalized euclidean distance" and self.norm_test):
+          for i in range(0, len(input_data)):
+            input_data[i] = z_normalize(input_data[i])
         
         matrix_shape = (input_data.shape[0], input_data.shape[0])
         matrix_values = np.zeros(shape=matrix_shape)

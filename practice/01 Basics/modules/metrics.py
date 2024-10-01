@@ -1,4 +1,6 @@
 import numpy as np
+import math
+import numpy
 
 
 def ED_distance(ts1: np.ndarray, ts2: np.ndarray) -> float:
@@ -24,6 +26,20 @@ def ED_distance(ts1: np.ndarray, ts2: np.ndarray) -> float:
     return ed_dist
 
 
+def simple_average_ts(ts, deviation_flag=False):
+  sum = 0
+  for val in ts:
+    if deviation_flag:
+      sum += val*val
+    else:
+      sum += val
+  return sum/len(ts)
+
+
+def standard_deviation_ts(ts):
+  return math.sqrt(simple_average_ts(ts, True) - math.pow(simple_average_ts(ts, False), 2))
+
+
 def norm_ED_distance(ts1: np.ndarray, ts2: np.ndarray) -> float:
     """
     Calculate the normalized Euclidean distance
@@ -39,8 +55,11 @@ def norm_ED_distance(ts1: np.ndarray, ts2: np.ndarray) -> float:
     """
 
     norm_ed_dist = 0
-
-    # INSERT YOUR CODE
+    
+    if len(ts1) != len(ts2):
+        return
+    n = len(ts1)
+    norm_ed_dist = math.sqrt(abs(2*n*(1- (numpy.dot(ts1, ts2) - n*simple_average_ts(ts1)*simple_average_ts(ts2)) / (n*standard_deviation_ts(ts1)*standard_deviation_ts(ts2)) )))
 
     return norm_ed_dist
 
