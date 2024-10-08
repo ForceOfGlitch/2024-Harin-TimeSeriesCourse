@@ -10,7 +10,7 @@ import plotly.express as px
 plotly.offline.init_notebook_mode(connected=True)
 
 
-def plot_ts_set(ts_set: np.ndarray, title: str = 'Input Time Series Set') -> None:
+def plot_ts_set(ts_set, title: str = 'Input Time Series Set') -> None:
     """
     Plot the time series set
 
@@ -54,7 +54,7 @@ def plot_ts_set(ts_set: np.ndarray, title: str = 'Input Time Series Set') -> Non
     fig.show(renderer="colab")
 
 
-def mplot2d(x: np.ndarrray, y: np.ndarrray, plot_title: str = None, x_title: str = None, y_title: str = None, trace_titles: np.ndarray = None) -> None:
+def mplot2d(x, y, plot_title: str = None, x_title: str = None, y_title: str = None, trace_titles = None) -> None:
     """
     Multiple 2D Plots on figure for different experiments
 
@@ -103,7 +103,7 @@ def mplot2d(x: np.ndarrray, y: np.ndarrray, plot_title: str = None, x_title: str
     fig.show(renderer="colab")
 
 
-def plot_bestmatch_data(ts: np.ndarrray, query: np.ndarray) -> None:
+def plot_bestmatch_data(ts, query) -> None:
     """
     Visualize the input data (time series and query) for the best match task
 
@@ -149,7 +149,7 @@ def plot_bestmatch_data(ts: np.ndarrray, query: np.ndarray) -> None:
     fig.show(renderer="colab")
 
 
-def plot_bestmatch_results(ts: np.ndarrray, query: np.ndarrray, bestmatch_results: dict) -> None:
+def plot_bestmatch_results(ts, query, bestmatch_results: dict) -> None:
     """
     Visualize the best match results
 
@@ -160,10 +160,46 @@ def plot_bestmatch_results(ts: np.ndarrray, query: np.ndarrray, bestmatch_result
     bestmatch_results: output data found by the best match algorithm
     """
 
-    # INSERT YOUR CODE
+    for bestmatch_result_indices in bestmatch_results.get("indices"):
+
+      ts_slice = ts[bestmatch_result_indices:bestmatch_result_indices + len(query)]
+      
+      query_len = query.shape[0]
+
+      fig = make_subplots(rows=1, cols=2, column_widths=[0.5, 0.5], subplot_titles=("Query", "Time Series Slice"), horizontal_spacing=0.04)
+
+      fig.add_trace(go.Scatter(x=np.arange(query_len), y=query, line=dict(color=px.colors.qualitative.Plotly[1])),
+                  row=1, col=1)
+      fig.add_trace(go.Scatter(x=np.arange(query_len), y=ts_slice, line=dict(color=px.colors.qualitative.Plotly[0])),
+                  row=1, col=2)
+
+      fig.update_annotations(font=dict(size=24, color='black'))
+
+      fig.update_xaxes(showgrid=False,
+                       linecolor='#000',
+                       ticks="outside",
+                       tickfont=dict(size=18, color='black'),
+                       linewidth=1,
+                       tickwidth=1,
+                       mirror=True)
+      fig.update_yaxes(showgrid=False,
+                       linecolor='#000',
+                       ticks="outside",
+                       tickfont=dict(size=18, color='black'),
+                       zeroline=False,
+                       linewidth=1,
+                       tickwidth=1,
+                       mirror=True)
+
+      fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",
+                        paper_bgcolor='rgba(0,0,0,0)',
+                        showlegend=False,
+                        title_x=0.5)
+
+      fig.show(renderer="colab")
 
 
-def pie_chart(labels: np.ndarrray, values: np.ndarrray, plot_title='Pie chart') -> None:
+def pie_chart(labels, values, plot_title='Pie chart') -> None:
     """
     Build the pie chart
 
